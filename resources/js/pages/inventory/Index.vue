@@ -146,7 +146,7 @@ const createInventoryForm = () => {
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
                                     <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="form.category_id" :class="[
-                                    form.errors.category_id
+                                    form.errors.category_id && form.category_id == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]">
@@ -161,7 +161,7 @@ const createInventoryForm = () => {
                                 <div class="relative z-0 w-full mb-5 group">
                                     <input type="number" v-model="form.qty" id="floating_quantity" :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    form.errors.qty
+                                    form.errors.qty && form.qty == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " value="1" />
@@ -175,7 +175,7 @@ const createInventoryForm = () => {
                                 <div class="relative z-0 w-full mb-5 group">
                                     <input type="number" v-model="form.purchase_price" id="floating_phone" :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    form.errors.purchase_price
+                                    form.errors.purchase_price && form.purchase_price == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
@@ -187,7 +187,7 @@ const createInventoryForm = () => {
                                 <div class="relative z-0 w-full mb-5 group">
                                     <input type="number" v-model="form.sell_price" id="floating_company" :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    form.errors.sell_price
+                                    form.errors.sell_price && form.sell_price == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
