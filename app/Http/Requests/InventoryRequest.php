@@ -23,10 +23,11 @@ class InventoryRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'category' => 'required',
+            'category_id' => 'required',
             'qty' => 'required|min:1',
             'purchase_price' => 'required|min:1',
-            'sell_price' => 'required|min:1'
+            'sell_price' => 'required|min:1',
+            'description' => 'nullable'
         ];
     }
 }

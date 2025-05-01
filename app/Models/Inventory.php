@@ -12,6 +12,7 @@ class Inventory extends Model
         'qty',
         'purchase_price',
         'sell_price',
+        'description',
     ];
 
     public function category(){
