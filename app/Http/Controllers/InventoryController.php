@@ -16,7 +16,8 @@ class InventoryController extends Controller
     public function index()
     {
         $categories = Category::get();
-        return Inertia::render('inventory/Index', ['categories' => $categories]);
+        $inventories = Inventory::with('category')->get();
+        return Inertia::render('inventory/Index', ['categories' => $categories, 'inventories' => $inventories]);
     }
 
     /**
@@ -33,7 +34,9 @@ class InventoryController extends Controller
     public function store(InventoryRequest $request)
     {
         $data = $request->validated();
-        dd($data);
+        Inventory::create($data);
+
+        return redirect()->route('inventory.index');
     }
 
     /**

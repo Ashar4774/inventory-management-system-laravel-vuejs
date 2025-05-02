@@ -3,11 +3,9 @@ import { ref } from 'vue';
 import AppLayout from "@/layouts/AppLayout.vue";
 import {type BreadcrumbItem } from "@/types";
 import {Head, useForm} from "@inertiajs/vue3";
-import {PlusIcon} from "lucide-vue-next";
+import {PlusIcon, TrashIcon, PenIcon, EyeIcon} from "lucide-vue-next";
 
-const show_create_inventory_modal = ref(false);
-
-defineProps(['categories']);
+const props = defineProps(['categories', 'inventories']);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,10 +13,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/inventory'
     }
 ]
-
-const addInvoiceModel = () => {
-    show_create_inventory_modal.value = true
-}
 
 const form = useForm({
     'title': '',
@@ -29,10 +23,37 @@ const form = useForm({
     'description': ''
 });
 
-const createInventoryForm = () => {
-    console.log(form);
-    form.post('/inventory')
+
+// Add Invoice Model module
+const show_create_inventory_modal = ref(false);
+const addInvoiceModel = () => {
+    show_create_inventory_modal.value = true
 }
+
+const closeInvoiceModel = () => {
+    show_create_inventory_modal.value = false
+}
+
+const createInventoryForm = () => {
+    form.post('/inventory',{
+        onSuccess: () => {
+            form.reset();
+            closeInvoiceModel();
+        }
+    })
+}
+
+// Edit Invoice Model Module
+const edit_create_inventory_modal = ref(false);
+const editInvoiceModel = () => {
+    edit_create_inventory_modal.value = true;
+}
+
+const closeInvoiceModel = () => {
+    edit_create_inventory_modal.value = false
+}
+
+// Delete Invoice Model Module
 </script>
 
 <template>
@@ -61,49 +82,39 @@ const createInventoryForm = () => {
                             Quantity
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Purchase Price
+                            Purchase Price(PKR)
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Sell Price
+                            Sell Price(PKR)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Action
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            Apple MacBook Pro 17"
-                        </th>
-                        <td class="px-6 py-4">
-                            Laptop
-                        </td>
-                        <td class="px-6 py-4">
-                            50
-                        </td>
-                        <td class="px-6 py-4">
-                            $2500
-                        </td>
-                        <td class="px-6 py-4">
-                            $3000
-                        </td>
-                    </tr>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            Microsoft Surface Pro
-                        </th>
-                        <td class="px-6 py-4">
-                            Laptop PC
-                        </td>
-                        <td class="px-6 py-4">
-                            15
-                        </td>
-
-                        <td class="px-6 py-4">
-                            $1499
-                        </td>
-                        <td class="px-6 py-4">
-                            $1999
-                        </td>
-                    </tr>
+                        <tr v-for="inventory in props.inventories" :key="inventory.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{ inventory.title }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ inventory.category.title }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ inventory.qty }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ inventory.purchase_price }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ inventory.sell_price }}
+                            </td>
+                            <td class="px-6 py-4 flex gap-1">
+                                <a href="" @click="deleteInvoiceModel" class="text-red-600"><TrashIcon/></a>
+                                <a href="" @click="editInvoiceModel" class="text-green-600"><PenIcon /></a>
+                                <a href="" @click="viewInvoiceModel" class="text-blue-600"><EyeIcon /></a>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -119,7 +130,7 @@ const createInventoryForm = () => {
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                             Create Inventory
                         </h3>
-                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" @click="show_create_inventory_modal = false">
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" @click="closeInvoiceModel()">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -152,7 +163,7 @@ const createInventoryForm = () => {
                                 ]">
 
                                         <option selected>Category</option>
-                                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>
+                                        <option v-for="category in props.categories" :key="category.id" :value="category.id">{{ category.title }}</option>
                                     </select>
                                     <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                         {{ form.errors.category_id }}
@@ -180,7 +191,7 @@ const createInventoryForm = () => {
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
                                     <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Purchase Price ($1499)</label>
-                                    <p v-if="form.errors.purchase_price" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                    <p v-if="form.errors.purchase_price && form.purchase_price == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                         {{ form.errors.purchase_price }}
                                     </p>
                                 </div>
@@ -192,7 +203,7 @@ const createInventoryForm = () => {
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
                                     <label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Sell Price ($1999)</label>
-                                    <p v-if="form.errors.sell_price" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                    <p v-if="form.errors.sell_price && form.sell_price == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                         {{ form.errors.sell_price }}
                                     </p>
                                 </div>
@@ -201,7 +212,7 @@ const createInventoryForm = () => {
                                 <div class="relative z-0 w-full mb-5 group">
                                     <textarea v-model="form.description" id="floating_description" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " ></textarea>
                                     <label for="floating_description" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Description</label>
-                                    <p v-if="form.errors.description" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                    <p v-if="form.errors.description && form.description == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                         {{ form.errors.description }}
                                     </p>
                                 </div>
