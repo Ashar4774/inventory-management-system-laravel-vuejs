@@ -50,9 +50,11 @@ class InventoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Inventory $inventory)
+    public function edit($id)
     {
-        //
+        return Inertia::render('inventory/Index', [
+           'inventory' => Inventory::with('category')->whereId($id)->first()
+        ]);
     }
 
     /**
