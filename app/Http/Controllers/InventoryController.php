@@ -42,9 +42,12 @@ class InventoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Inventory $inventory)
+    public function show($id)
     {
-        //
+        $inventory = Inventory::with('category')->whereId($id)->first();
+        return response()->json([
+            'inventory' => $inventory
+        ]);
     }
 
     /**
@@ -52,24 +55,32 @@ class InventoryController extends Controller
      */
     public function edit($id)
     {
-        return Inertia::render('inventory/Index', [
-           'inventory' => Inventory::with('category')->whereId($id)->first()
+        $inventory = Inventory::with('category')->whereId($id)->first();
+        return response()->json([
+            'inventory' => $inventory
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Inventory $inventory)
+    public function update(InventoryRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $inventory = Inventory::findOrFail($id);
+        $inventory->update($data);
+
+        return redirect()->route('inventory.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Inventory $inventory)
+    public function destroy($id)
     {
-        //
+        $inventory = Inventory::findOrFail($id);
+        $inventory->delete();
+
+        return redirect()->route('inventory.index');
     }
 }

@@ -4,6 +4,7 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import {type BreadcrumbItem } from "@/types";
 import {Head, useForm} from "@inertiajs/vue3";
 import {PlusIcon, TrashIcon, PenIcon, EyeIcon} from "lucide-vue-next";
+import axios from 'axios';
 
 const props = defineProps(['categories', 'inventories', 'inventory']);
 
@@ -15,6 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 const form = useForm({
+    'id': '',
     'title': '',
     'category_id': '',
     'qty': '',
@@ -46,15 +48,30 @@ const createInventoryForm = () => {
 
 // Edit Invoice Model Module
 const edit_create_inventory_modal = ref(false);
-const editInvoiceModel = (id) => {
+const editInvoiceModel = async (id) => {
     edit_create_inventory_modal.value = true;
-    form.get(`/inventory/${id}/edit`, {
-        onSuccess: (data) => {
-            console.log('edit success: ', data);
-            console.log('prop inventory success: ', props.inventory);
 
-        }
+    await axios.get(`/inventory/${id}/edit`)
+        .then((data)=>{
+            form.id = data.data.inventory.id;
+            form.title = data.data.inventory.title;
+            form.category_id = data.data.inventory.category.id;
+            form.qty = data.data.inventory.qty;
+            form.purchase_price = data.data.inventory.purchase_price;
+            form.sell_price = data.data.inventory.sell_price;
+            form.description = data.data.inventory.description;
+        }).catch((error)=>{
+            console.error(error);
     });
+}
+
+const editInventoryForm = (id) => {
+    form.put(`/inventory/${id}`, {
+        onSuccess: () => {
+            edit_create_inventory_modal.value = false;
+            form.reset();
+        }
+    })
 }
 
 const closeEditInvoiceModel = () => {
@@ -63,6 +80,30 @@ const closeEditInvoiceModel = () => {
 }
 
 // Delete Invoice Model Module
+const delete_create_inventory_modal = ref(false);
+
+const deleteInvoiceModel = async (id) => {
+    delete_create_inventory_modal.value = true;
+    await axios.get(`/inventory/${id}`)
+        .then(response=>{
+            form.id = response.data.inventory.id;
+            form.title = response.data.inventory.title;
+        }).catch(error=>{
+            console.error(error);
+    })
+}
+
+const deleteInventoryForm = (id) => {
+    form.delete(`/inventory/${id}`, {
+        onSuccess: () => {
+            closeDeleteInvoiceModel();
+        }
+    })
+}
+const closeDeleteInvoiceModel = () => {
+    delete_create_inventory_modal.value = false;
+    form.reset();
+}
 </script>
 
 <template>
@@ -119,7 +160,7 @@ const closeEditInvoiceModel = () => {
                                 {{ inventory.sell_price }}
                             </td>
                             <td class="px-6 py-4 flex gap-1">
-                                <a href="" @click="deleteInvoiceModel" class="text-red-600"><TrashIcon/></a>
+                                <button @click.prevent="deleteInvoiceModel(inventory.id)" class="text-red-600"><TrashIcon/></button>
                                 <button @click.prevent="editInvoiceModel(inventory.id)" class="text-green-600"><PenIcon /></button>
                                 <a href="" @click="viewInvoiceModel" class="text-blue-600"><EyeIcon /></a>
                             </td>
@@ -171,7 +212,7 @@ const closeEditInvoiceModel = () => {
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]">
 
-                                        <option selected>Category</option>
+                                        <option selected disabled>Category</option>
                                         <option v-for="category in props.categories" :key="category.id" :value="category.id">{{ category.title }}</option>
                                     </select>
                                     <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
@@ -254,7 +295,7 @@ const closeEditInvoiceModel = () => {
                     </div>
                     <!-- Modal body -->
                     <div class="p-4 md:p-5 space-y-4">
-                        <form class="p-5" @submit.prevent="editInventoryForm">
+                        <form class="p-5" @submit.prevent="editInventoryForm(form.id)">
 
 
                             <div class="relative z-0 w-full mb-5 group">
@@ -277,7 +318,7 @@ const closeEditInvoiceModel = () => {
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]">
 
-                                        <option selected>Category</option>
+                                        <option selected disabled>Category</option>
                                         <option v-for="category in props.categories" :key="category.id" :value="category.id">{{ category.title }}</option>
                                     </select>
                                     <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
@@ -333,7 +374,41 @@ const closeEditInvoiceModel = () => {
                                 </div>
                             </div>
                             <div >
-                                <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Create</button>
+                                <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Inventory modal -->
+        <div v-if="delete_create_inventory_modal" id="create-inventory-modal" class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full bg-gray-500">
+            <div class="relative p-4 w-full max-w-2xl max-h-full mx-auto">
+                <!-- Modal content -->
+                <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+                    <!-- Modal header -->
+                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            Edit Inventory
+                        </h3>
+                        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" @click="closeDeleteInvoiceModel()">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                            <span class="sr-only" >Close modal</span>
+                        </button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="p-4 md:p-5 space-y-4">
+                        <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                            Do you want to delete the inventory {{ form.title }}
+                        </p>
+                        <form class="p-5" @submit.prevent="deleteInventoryForm(form.id)">
+
+                            <div class="flex gap-1">
+                                <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Yes</button>
+                                <button type="submit" @click.prevent="closeDeleteInvoiceModel()" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">No</button>
                             </div>
                         </form>
                     </div>
