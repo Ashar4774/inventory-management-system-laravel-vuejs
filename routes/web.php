@@ -15,6 +15,7 @@ Route::get('dashboard', function () {
 
 Route::resource('category', CategoryController::class);
 Route::resource('inventory', InventoryController::class);
+Route::resource('vendor', InventoryController::class);
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
