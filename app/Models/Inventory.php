@@ -9,6 +9,7 @@ class Inventory extends Model
     protected $fillable = [
       'title',
         'category_id',
+        'vendor_id',
         'qty',
         'purchase_price',
         'sell_price',
@@ -17,5 +18,9 @@ class Inventory extends Model
 
     public function category(){
         return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function vendor(){
+        return $this->belongsTo(Vendor::class, 'vendor_id');
     }
 }
