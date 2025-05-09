@@ -16,7 +16,7 @@ class InventoryController extends Controller
     public function index()
     {
         $categories = Category::get();
-        $inventories = Inventory::with('category')->get();
+        $inventories = Inventory::with('category', 'vendor')->get();
         return Inertia::render('inventory/Index', ['categories' => $categories, 'inventories' => $inventories]);
     }
 

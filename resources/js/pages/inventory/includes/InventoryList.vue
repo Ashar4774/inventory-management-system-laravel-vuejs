@@ -14,6 +14,9 @@ const listProp = defineProps(['inventories', 'editInvoice', 'deleteInvoice'])
             {{ inventory.category.title }}
         </td>
         <td class="px-6 py-4">
+            {{ inventory.vendor.name }}
+        </td>
+        <td class="px-6 py-4">
             {{ inventory.qty }}
         </td>
         <td class="px-6 py-4">
