@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendorRequest;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,9 +30,11 @@ class VendorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(VendorRequest $request)
     {
-        //
+        $data = $request->validated();
+        Vendor::create($data);
+        return redirect()->route('vendor.index');
     }
 
     /**

@@ -11,7 +11,7 @@ class VendorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class VendorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'phone_no' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
+            'description' => 'nullable'
         ];
     }
 }

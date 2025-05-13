@@ -1,5 +1,18 @@
 <script setup lang="ts">
 
+const props = defineProps(['form', 'show_create_vendor_modal']);
+const emits = defineEmits(['closeVendorCreateModel']);
+
+const createVendorForm = () => {
+    props.form.post('/vendor', {
+        onSuccess: () => {
+            emits('closeVendorCreateModel');
+        }
+    })
+}
+const closeVendorCreateModel = () => {
+    emits('closeVendorCreateModel');
+}
 </script>
 
 <template>
@@ -10,7 +23,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Create Inventory
+                        Create Vendor
                     </h3>
                     <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" @click="closeVendorCreateModel">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -25,68 +38,40 @@
 
 
                         <div class="relative z-0 w-full mb-5 group">
-                            <input type="text" v-model="props.form.title" id="floating_first_name" placeholder=" " :class="[
+                            <input type="text" v-model="props.form.name" id="floating_first_name" placeholder=" " :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    props.form.errors.title
+                                    props.form.errors.name
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" />
-                            <label for="floating_product_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Product Name</label>
-                            <p v-if="props.form.errors.title && props.form.title == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                {{ props.form.errors.title }}
+                            <label for="floating_product_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Vendor Name</label>
+                            <p v-if="props.form.errors.name && props.form.name == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                {{ props.form.errors.name }}
                             </p>
                         </div>
                         <div class="grid md:grid-cols-2 md:gap-6">
                             <div class="relative z-0 w-full mb-5 group">
-                                <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" v-model="props.form.category_id" :class="[
-                                    props.form.errors.category_id && props.form.category_id == ''
-                                        ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
-                                        : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
-                                ]">
-
-                                    <option selected disabled>Category</option>
-                                    <option v-for="category in props.categories" :key="category.id" :value="category.id">{{ category.title }}</option>
-                                </select>
-                                <p v-if="props.form.errors.category_id && props.form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                    {{ props.form.errors.category_id }}
-                                </p>
-                            </div>
-                            <div class="relative z-0 w-full mb-5 group">
-                                <input type="number" v-model="props.form.qty" id="floating_quantity" :class="[
+                                <input type="text" v-model="props.form.phone_no" id="floating_phone" :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    props.form.errors.qty && props.form.qty == ''
-                                        ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
-                                        : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
-                                ]" placeholder=" " value="1" />
-                                <label for="floating_quantity" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Quantity</label>
-                                <p v-if="props.form.errors.qty && props.form.qty == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                    {{ props.form.errors.qty }}
-                                </p>
-                            </div>
-                        </div>
-                        <div class="grid md:grid-cols-2 md:gap-6">
-                            <div class="relative z-0 w-full mb-5 group">
-                                <input type="number" v-model="props.form.purchase_price" id="floating_phone" :class="[
-                                    'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    props.form.errors.purchase_price && props.form.purchase_price == ''
+                                    props.form.errors.phone_no && props.form.phone_no == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
-                                <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Purchase Price ($1499)</label>
-                                <p v-if="props.form.errors.purchase_price && props.form.purchase_price == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                    {{ props.form.errors.purchase_price }}
+                                <label for="floating_phone" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Phone No.</label>
+                                <p v-if="props.form.errors.phone_no && props.form.phone_no == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                    {{ props.form.errors.phone_no }}
                                 </p>
                             </div>
                             <div class="relative z-0 w-full mb-5 group">
-                                <input type="number" v-model="props.form.sell_price" id="floating_company" :class="[
+                                <input type="text" v-model="props.form.address" id="floating_company" :class="[
                                     'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer',
-                                    props.form.errors.sell_price && props.form.sell_price == ''
+                                    props.form.errors.address && props.form.address == ''
                                         ? 'border-red-500 text-red-900 dark:border-red-400 dark:text-red-400 focus:border-red-600'
                                         : 'text-gray-900 border-gray-300 dark:text-white dark:border-gray-600 focus:border-blue-600'
                                 ]" placeholder=" " />
-                                <label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Sell Price ($1999)</label>
-                                <p v-if="props.form.errors.sell_price && props.form.sell_price == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                    {{ props.form.errors.sell_price }}
+                                <label for="floating_company" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Address</label>
+                                <p v-if="props.form.errors.address && props.form.address == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                    {{ props.form.errors.address }}
                                 </p>
                             </div>
                         </div>
