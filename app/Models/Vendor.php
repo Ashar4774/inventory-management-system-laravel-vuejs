@@ -13,7 +13,7 @@ class Vendor extends Model
       'description'
     ];
 
-    public function inventory(){
+    public function inventories(){
         return $this->hasMany(Inventory::class);
     }
 }

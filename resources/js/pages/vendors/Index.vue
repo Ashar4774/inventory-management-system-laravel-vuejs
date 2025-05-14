@@ -86,6 +86,7 @@ const ViewVendorModel = (id) => {
     show_view_vendor_modal.value = true;
 
     axios.get(`/vendor/${id}`).then(response=>{
+        console.table(response.data.vendor)
         form.id = response.data.vendor.id;
         form.name = response.data.vendor.name;
         form.address = response.data.vendor.address;

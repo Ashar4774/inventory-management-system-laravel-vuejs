@@ -42,10 +42,9 @@ class VendorController extends Controller
      */
     public function show($id)
     {
-        $vendor = Vendor::whereId($id)->first();
+        $vendor = Vendor::with('inventories')->whereId($id)->first();
         return response()->json([
-           'vendor' => $vendor,
-            'id' => $id
+           'vendor' => $vendor
         ]);
     }
 
