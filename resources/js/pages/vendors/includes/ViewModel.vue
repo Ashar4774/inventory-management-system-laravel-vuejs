@@ -53,6 +53,14 @@ const closeViewVendorModel = () => {
                                         {{ props.form.address }}
                                     </td>
                                 </tr>
+                                <tr class="bg-white dark:bg-gray-800">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        Description
+                                    </th>
+                                    <td class="px-6 py-4" colspan="3">
+                                        {{ props.form.description ?? '-' }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
