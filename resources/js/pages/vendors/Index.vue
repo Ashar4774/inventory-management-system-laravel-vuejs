@@ -10,6 +10,7 @@ import CreateModel from "@/pages/vendors/includes/CreateModel.vue";
 import EditModel from "@/pages/vendors/includes/EditModel.vue";
 import axios from "axios";
 import DeleteModel from "@/pages/vendors/includes/DeleteModel.vue";
+import ViewModel from "@/pages/vendors/includes/ViewModel.vue";
 
 const props = defineProps(['vendors']);
 
@@ -79,6 +80,24 @@ const closeDeleteVendorModel = () => {
     form.reset();
 }
 
+// View module
+const show_view_vendor_modal = ref(false);
+const ViewVendorModel = (id) => {
+    show_view_vendor_modal.value = true;
+
+    axios.get(`/vendor/${id}`).then(response=>{
+        form.id = response.data.vendor.id;
+        form.name = response.data.vendor.name;
+        form.address = response.data.vendor.address;
+        form.phone_no = response.data.vendor.phone_no;
+        form.description = response.data.vendor.description;
+    })
+}
+
+const closeViewVendorModel = () => {
+    show_view_vendor_modal.value = false;
+    form.reset();
+}
 </script>
 
 <template>
@@ -112,7 +131,7 @@ const closeDeleteVendorModel = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <VendorList :vendors="vendors" :EditVendorModel="EditVendorModel" :DeleteVendorModel="DeleteVendorModel" />
+                        <VendorList :vendors="vendors" :EditVendorModel="EditVendorModel" :DeleteVendorModel="DeleteVendorModel" :ViewVendorModel="ViewVendorModel" />
                     </tbody>
                 </table>
             </div>
@@ -126,6 +145,9 @@ const closeDeleteVendorModel = () => {
 
         <!-- Delete Inventory modal -->
         <DeleteModel :form="form" :show_delete_vendor_modal="show_delete_vendor_modal" @closeDeleteVendorModel="closeDeleteVendorModel" />
+
+<!--         View Vendor model-->
+        <ViewModel :form="form" :show_view_vendor_modal="show_view_vendor_modal" @closeViewVendorModel="closeViewVendorModel" />
     </AppLayout>
 </template>
 

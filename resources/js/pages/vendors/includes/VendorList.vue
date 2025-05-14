@@ -2,7 +2,7 @@
 
 import {EyeIcon, PenIcon, TrashIcon} from "lucide-vue-next";
 
-const props = defineProps(['vendors' , 'EditVendorModel', 'DeleteVendorModel']);
+const props = defineProps(['vendors' , 'EditVendorModel', 'DeleteVendorModel', 'ViewVendorModel']);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const props = defineProps(['vendors' , 'EditVendorModel', 'DeleteVendorModel']);
         <td class="px-6 py-4 flex gap-1">
             <button @click="DeleteVendorModel(vendor.id)" class="text-red-600"><TrashIcon/></button>
             <button @click="EditVendorModel(vendor.id)" class="text-green-600"><PenIcon /></button>
-            <a href="" class="text-blue-600"><EyeIcon /></a>
+            <button @click="ViewVendorModel(vendor.id)" class="text-blue-600"><EyeIcon /></button>
         </td>
     </tr>
 </template>
