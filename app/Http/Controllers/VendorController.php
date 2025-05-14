@@ -40,32 +40,46 @@ class VendorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Vendor $vendor)
+    public function show($id)
     {
-        //
+        $vendor = Vendor::whereId($id)->first();
+        return response()->json([
+           'vendor' => $vendor,
+            'id' => $id
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Vendor $vendor)
+    public function edit($id)
     {
-        //
+        $vendor = Vendor::whereId($id)->first();
+        return response()->json([
+            'vendor' => $vendor
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Vendor $vendor)
+    public function update(VendorRequest $request, $id)
     {
-        //
+        $data = $request->validated();
+        $vendor = Vendor::whereId($id)->first();
+        $vendor->update($data);
+
+        return redirect()->route('vendor.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Vendor $vendor)
+    public function destroy($id)
     {
-        //
+        $vendor = Vendor::findOrFail($id);
+        $vendor->delete();
+
+        return redirect()->route('vendor.index');
     }
 }

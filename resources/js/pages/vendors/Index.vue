@@ -8,6 +8,8 @@ import {PlusIcon, TrashIcon, PenIcon, EyeIcon} from "lucide-vue-next";
 import VendorList from "@/pages/vendors/includes/VendorList.vue";
 import CreateModel from "@/pages/vendors/includes/CreateModel.vue";
 import EditModel from "@/pages/vendors/includes/EditModel.vue";
+import axios from "axios";
+import DeleteModel from "@/pages/vendors/includes/DeleteModel.vue";
 
 const props = defineProps(['vendors']);
 
@@ -41,9 +43,42 @@ const closeVendorCreateModel = () => {
 // Edit module
 const show_edit_vendor_modal = ref(false);
 
+const EditVendorModel = async (id) => {
+    show_edit_vendor_modal.value = true;
+
+    await axios.get(`/vendor/${id}/edit`).then(response=>{
+        console.log(response.data);
+        form.id = response.data.vendor.id;
+        form.name = response.data.vendor.name;
+        form.address = response.data.vendor.address;
+        form.phone_no = response.data.vendor.phone_no;
+        form.description = response.data.vendor.description;
+    }).catch(error=>{
+        console.error(error.data);
+    })
+}
+
 const closeVendorEditModel = () => {
     show_edit_vendor_modal.value = false;
+    form.reset();
 }
+
+// Delete module
+const show_delete_vendor_modal = ref(false);
+
+const DeleteVendorModel = (id) => {
+    show_delete_vendor_modal.value = true;
+
+    axios.get(`/vendor/${id}`).then(response=>{
+        form.id = response.data.vendor.id;
+        form.name = response.data.vendor.name;
+    })
+}
+const closeDeleteVendorModel = () => {
+    show_delete_vendor_modal.value = false;
+    form.reset();
+}
+
 </script>
 
 <template>
@@ -77,7 +112,7 @@ const closeVendorEditModel = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <VendorList :vendors="vendors" />
+                        <VendorList :vendors="vendors" :EditVendorModel="EditVendorModel" :DeleteVendorModel="DeleteVendorModel" />
                     </tbody>
                 </table>
             </div>
@@ -90,7 +125,7 @@ const closeVendorEditModel = () => {
         <EditModel :form="form" :show_edit_vendor_modal="show_edit_vendor_modal" @closeVendorEditModel="closeVendorEditModel" />
 
         <!-- Delete Inventory modal -->
-
+        <DeleteModel :form="form" :show_delete_vendor_modal="show_delete_vendor_modal" @closeDeleteVendorModel="closeDeleteVendorModel" />
     </AppLayout>
 </template>
 
