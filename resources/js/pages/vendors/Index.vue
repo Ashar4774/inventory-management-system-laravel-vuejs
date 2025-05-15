@@ -27,6 +27,7 @@ const form = useForm({
     'address': '',
     'phone_no': '',
     'description': '',
+    'inventories': []
 })
 
 const show_create_vendor_modal = ref(false);
@@ -92,6 +93,7 @@ const ViewVendorModel = (id) => {
         form.address = response.data.vendor.address;
         form.phone_no = response.data.vendor.phone_no;
         form.description = response.data.vendor.description;
+        form.inventories = response.data.vendor.inventories;
     })
 }
 

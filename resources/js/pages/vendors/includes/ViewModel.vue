@@ -30,18 +30,20 @@ const closeViewVendorModel = () => {
 
                     <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                            <tbody>
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                            <thead>
+                                <tr class="bg-white dark:bg-gray-800">
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Name
                                     </th>
-                                    <td class="px-6 py-4">
+                                    <td class="py-4" colspan="3">
                                         {{ props.form.name }}
                                     </td>
-                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                </tr>
+                                <tr class="bg-white dark:bg-gray-800">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Phone No.
-                                    </td>
-                                    <td class="px-6 py-4">
+                                    </th>
+                                    <td class="py-4" colspan="3">
                                         {{ props.form.phone_no }}
                                     </td>
                                 </tr>
@@ -49,7 +51,7 @@ const closeViewVendorModel = () => {
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Address
                                     </th>
-                                    <td class="px-6 py-4" colspan="3">
+                                    <td class="py-4" colspan="3">
                                         {{ props.form.address }}
                                     </td>
                                 </tr>
@@ -57,9 +59,29 @@ const closeViewVendorModel = () => {
                                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                         Description
                                     </th>
-                                    <td class="px-6 py-4" colspan="3">
+                                    <td class="py-4" colspan="3">
                                         {{ props.form.description ?? '-' }}
                                     </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-center">
+                                    <th colspan="4" class="px-6 py-4 text-xl">Inventories</th>
+                                </tr>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <th class="px-6 py-4">Product name</th>
+                                    <th class="px-6 py-4">Quantity</th>
+                                    <th class="px-6 py-4">Purchase Price(PKR)</th>
+                                    <th class="px-6 py-4">Sell Price(PKR)</th>
+                                </tr>
+                                <tr v-if="props.form.inventories.length > 0" v-for="inventory in props.form.inventories" :key="inventory.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <td class="px-6 py-4">{{ inventory.title }}</td>
+                                    <td class="px-6 py-4">{{ inventory.qty }}</td>
+                                    <td class="px-6 py-4">{{ inventory.purchase_price }}</td>
+                                    <td class="px-6 py-4">{{ inventory.sell_price }}</td>
+                                </tr>
+                                <tr v-else class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 text-center">
+                                    <td colspan="4" class="px-6 py-4">No Inventory associated with this vendor.</td>
                                 </tr>
                             </tbody>
                         </table>
