@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('purchase_orders', function (Blueprint $table) {
+        Schema::create('purchase_order_inventories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('purchase_order_id')->constrained()->onDelete('cascade');
             $table->foreignId('vendor_id')->constrained()->onDelete('cascade');
-            $table->string('order_number', 50);
-            $table->date('expected_delivery')->nullable();
-            $table->enum('status', ['pending', 'received', 'cancelled'])->default('pending');
-            $table->enum('payment_status', ['unpaid', 'paid', 'partially_paid'])->default('unpaid');
-            $table->integer('sub_total');
+            $table->integer('unit_price');
+            $table->integer('quantity_ordered');
+            $table->integer('quantity_received');
             $table->integer('discount');
             $table->enum('discount_type', ['amount', 'percent'])->default('amount');
-            $table->integer('total_amount');
-            $table->text('note')->nullable();
+            $table->integer('total_price');
+            $table->enum('status', ['pending', 'received', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('purchase_orders');
+        Schema::dropIfExists('purchase_order_inventories');
     }
 };
