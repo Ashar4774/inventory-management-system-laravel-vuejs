@@ -29,6 +29,11 @@ const mainNavItems: NavItem[] = [
         href: '/vendor',
         icon: PackageOpen,
     },
+    {
+        title: 'Purchase Order',
+        href: '/purchase-order',
+        icon: PackageOpen,
+    },
 ];
 
 /*const footerNavItems: NavItem[] = [

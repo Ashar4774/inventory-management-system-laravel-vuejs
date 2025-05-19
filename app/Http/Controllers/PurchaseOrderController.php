@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PurchaseOrder;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PurchaseOrderController extends Controller
 {
@@ -12,7 +13,9 @@ class PurchaseOrderController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('purchase_order/Index', [
+            'purchase_orders' => PurchaseOrder::get()
+        ]);
     }
 
     /**
