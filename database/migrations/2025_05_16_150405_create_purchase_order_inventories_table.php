@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('purchase_order_inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchase_order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('vendor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('inventory_id')->constrained()->onDelete('cascade');
             $table->integer('unit_price');
             $table->integer('quantity_ordered');
-            $table->integer('quantity_received');
-            $table->integer('discount');
-            $table->enum('discount_type', ['amount', 'percent'])->default('amount');
+            $table->integer('quantity_received')->nullable();
+            $table->integer('discount')->nullable();
+            $table->enum('discount_type', ['amount', 'percent'])->nullable();
             $table->integer('total_price');
             $table->enum('status', ['pending', 'received', 'cancelled'])->default('pending');
             $table->timestamps();

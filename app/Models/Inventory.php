@@ -23,4 +23,8 @@ class Inventory extends Model
     public function vendor(){
         return $this->belongsTo(Vendor::class, 'vendor_id');
     }
+
+    public function purchase_order_inventories(){
+        return $this->hasMany(PurchaseOrderInventory::class);
+    }
 }

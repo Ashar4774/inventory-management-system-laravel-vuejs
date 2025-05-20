@@ -23,7 +23,7 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('purchase_order/Create');
     }
 
     /**
