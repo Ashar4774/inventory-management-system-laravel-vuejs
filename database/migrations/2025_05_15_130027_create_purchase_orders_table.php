@@ -19,8 +19,8 @@ return new class extends Migration
             $table->enum('status', ['pending', 'received', 'cancelled'])->default('pending');
             $table->enum('payment_status', ['unpaid', 'paid', 'partially_paid'])->default('unpaid');
             $table->integer('sub_total');
-            $table->integer('discount');
-            $table->enum('discount_type', ['amount', 'percent'])->default('amount');
+            $table->integer('discount')->nullable();
+            $table->enum('discount_type', ['amount', 'percent'])->nullable();
             $table->integer('total_amount');
             $table->text('note')->nullable();
             $table->timestamps();
