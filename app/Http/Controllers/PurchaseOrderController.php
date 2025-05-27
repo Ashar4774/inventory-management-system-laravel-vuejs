@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\PurchaseOrder;
+use App\Models\Vendor;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -23,7 +26,15 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        return Inertia::render('purchase_order/Create');
+        $vendors = Vendor::get();
+        $categories = Category::get();
+        $inventories = Inventory::with('category')->get();
+
+        return Inertia::render('purchase_order/Create', [
+            'vendors' => $vendors,
+            'categories' => $categories,
+            'inventories' => $inventories,
+        ]);
     }
 
     /**

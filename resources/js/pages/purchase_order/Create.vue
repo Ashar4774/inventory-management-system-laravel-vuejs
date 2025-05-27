@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 import AppLayout from "@/layouts/AppLayout.vue";
 import {type BreadcrumbItem } from "@/types";
 import {Head, useForm} from "@inertiajs/vue3";
 import {PlusIcon, TrashIcon, PenIcon, EyeIcon} from "lucide-vue-next";
 import axios from 'axios';
 
+const props = defineProps(['categories', 'inventories','vendors']);
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Purchase Order',
@@ -16,6 +17,44 @@ const breadcrumbs: BreadcrumbItem[] = [
 const form = useForm({
     //
 });
+const orderNumber = ref();
+const inventoryList = ref([]);
+
+const inventoryListRow = () => {
+    inventoryList.value.push({
+        product_name: '',
+        category: '',
+        quantity: 0,
+        price: 0,
+        discount: 0,
+        discount_type: ''
+    })
+}
+
+const generateOrderNumber = () => {
+    const timestamp = new Date().getTime();
+    const random = Math.floor(1000 + Math.random() * 9000 );
+    orderNumber.value = `PO-${timestamp}-${random}`;
+}
+
+onMounted(()=>{
+    inventoryListRow();
+    generateOrderNumber();
+})
+const addInventoryList = () => {
+    inventoryList.value.push({
+        product_name: '',
+        category: '',
+        quantity: 0,
+        price: 0,
+        discount: 0,
+        discount_type: ''
+    })
+}
+
+const removeInventoryList = (index) => {
+    inventoryList.value.splice(index, 1)
+}
 
 </script>
 
@@ -37,7 +76,7 @@ const form = useForm({
                                 <!--                                ]" />-->
                                 <input type="text"  id="floating_first_name" placeholder=" " :class="[
                                         'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer'
-                                    ]" />
+                                    ]" v-model="orderNumber" />
                                 <label for="floating_product_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Order Number</label>
                                 <!--                        <p v-if="form.errors.title && form.title == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                             {{ form.errors.title }}
@@ -45,24 +84,16 @@ const form = useForm({
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
-                                    <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
+                                    <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 
                                         <option selected disabled>Vendor</option>
-                                        <!--                                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>-->
+                                        <option v-for="vendor in vendors" :key="vendor.id" :value="vendor.id">{{ vendor.name }}</option>
                                     </select>
                                     <!--                            <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                     {{ form.errors.category_id }}
                                                                 </p>-->
                                 </div>
-                                <div class="relative z-0 w-full mb-5 group">
-                                    <input type="text"  id="floating_quantity" :class="[
-                                        'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer'
-                                    ]" placeholder=" " value="Vendor Name" />
-                                    <label for="floating_quantity" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Vendor Name</label>
-                                    <!--                            <p v-if="form.errors.qty && form.qty == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
-                                                                    {{ form.errors.qty }}
-                                                                </p>-->
-                                </div>
+
                             </div>
                             <div class="grid md:grid-cols-2 md:gap-6">
                                 <div class="relative z-0 w-full mb-5 group">
@@ -146,21 +177,20 @@ const form = useForm({
                     <div class="flex mt-2">
                         <div class="w-full rounded-xl border border-sidebar-border/70 dark:border-sidebar-border p-10">
                             <div class="relative z-0 w-full mb-5 group">
-                                <a href="" @click.prevent="addInventoryList" class="hover:text-blue-600 hover:underline">Add new inventory</a>
+                                <a href="" @click.prevent="addInventoryList" class="text-blue-600 hover:text-black underline">Add new inventory</a>
                             </div>
-                            <div class="inventory-items">
-                                <div class="grid md:grid-cols-6 md:gap-6" id="">
+                            <div class="inventory-items" v-if="inventoryList.length">
+                                <div class="grid md:grid-cols-6 md:gap-6" id="" v-for="(inventory, index) in inventoryList"
+                                     :key="index">
                                     <div class="relative z-0 w-full mb-5 group">
-                                        <input type="text"  id="floating_product_name" list="productOptions" placeholder=" " value="" :class="[
+                                        <input type="text"  :id="'floating_product_name_' + index" list="productOptions" placeholder=" " value="" :class="[
                                         'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer text-capitalize'
                                     ]" />
-                                        <label for="floating_product_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Product Name</label>
+                                        <label :for="'floating_product_name_' + index" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Product Name</label>
                                         <datalist id="productOptions" class="hidden border-b border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
 
                                             <!--                                        <option selected disabled>Category</option>-->
-                                            <option value="amount" />
-                                            <option value="percent" />
-                                            <!--                                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>-->
+                                            <option v-for="inventory in inventories" :key="inventory.id" :value="inventory.id">{{ inventory.title }}</option>
                                         </datalist>
                                         <!--                        <p v-if="form.errors.title && form.title == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                     {{ form.errors.title }}
@@ -170,9 +200,7 @@ const form = useForm({
                                         <select id="countries" class=" border-b border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
 
                                             <option selected disabled>Category</option>
-                                            <option value="amount">Amount</option>
-                                            <option value="percent">Percent</option>
-                                            <!--                                <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>-->
+                                            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>
                                         </select>
                                         <!--                            <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                         {{ form.errors.category_id }}
@@ -216,7 +244,7 @@ const form = useForm({
                                         <!--                            <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                         {{ form.errors.category_id }}
                                                                     </p>-->
-                                        <button class="text-red-600"><TrashIcon/></button>
+                                        <button class="text-red-600" :class="[inventoryList.length == 1 ? 'hidden' : '']" @click="removeInventoryList(index)"><TrashIcon/></button>
                                     </div>
                                 </div>
                                 <div class="text-right">
