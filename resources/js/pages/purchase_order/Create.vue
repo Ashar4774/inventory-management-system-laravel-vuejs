@@ -48,7 +48,8 @@ const addInventoryList = () => {
         quantity: 0,
         price: 0,
         discount: 0,
-        discount_type: ''
+        discount_type: '',
+        total_price: '',
     })
 }
 
@@ -180,7 +181,7 @@ const removeInventoryList = (index) => {
                                 <a href="" @click.prevent="addInventoryList" class="text-blue-600 hover:text-black underline">Add new inventory</a>
                             </div>
                             <div class="inventory-items" v-if="inventoryList.length">
-                                <div class="grid md:grid-cols-6 md:gap-6" id="" v-for="(inventory, index) in inventoryList"
+                                <div class="grid md:grid-cols-7 md:gap-6" id="" v-for="(inventory, index) in inventoryList"
                                      :key="index">
                                     <div class="relative z-0 w-full mb-5 group">
                                         <input type="text"  :id="'floating_product_name_' + index" list="productOptions" placeholder=" " value="" :class="[
@@ -190,7 +191,7 @@ const removeInventoryList = (index) => {
                                         <datalist id="productOptions" class="hidden border-b border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
 
                                             <!--                                        <option selected disabled>Category</option>-->
-                                            <option v-for="inventory in inventories" :key="inventory.id" :value="inventory.id">{{ inventory.title }}</option>
+                                            <option v-for="inventory in inventories" :key="inventory.id" :value="inventory.title" />
                                         </datalist>
                                         <!--                        <p v-if="form.errors.title && form.title == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                     {{ form.errors.title }}
@@ -233,7 +234,7 @@ const removeInventoryList = (index) => {
                                                                         {{ form.errors.qty }}
                                                                     </p>-->
                                     </div>
-                                    <div class="relative z-0 w-full mb-5 group flex gap-3">
+                                    <div class="relative z-0 w-full mb-5 group">
                                         <select id="countries" class=" border-b border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" >
 
                                             <option selected disabled>Discount type</option>
@@ -243,6 +244,15 @@ const removeInventoryList = (index) => {
                                         </select>
                                         <!--                            <p v-if="form.errors.category_id && form.category_id == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
                                                                         {{ form.errors.category_id }}
+                                                                    </p>-->
+                                    </div>
+                                    <div class="relative z-0 w-full mb-5 group flex gap-3">
+                                        <input type="number"  id="floating_quantity" :class="[
+                                        'block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer'
+                                    ]" placeholder=" " value="0" readonly />
+                                        <label for="floating_quantity" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Total Price</label>
+                                        <!--                            <p v-if="form.errors.qty && form.qty == ''" class="mt-1 text-sm text-red-600 dark:text-red-500">
+                                                                        {{ form.errors.qty }}
                                                                     </p>-->
                                         <button class="text-red-600" :class="[inventoryList.length == 1 ? 'hidden' : '']" @click="removeInventoryList(index)"><TrashIcon/></button>
                                     </div>
